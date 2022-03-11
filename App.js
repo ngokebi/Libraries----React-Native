@@ -69,14 +69,7 @@ const App = () => {
   const openContact = () => {
     requestPermission().then(didGetPermission => {
       if (didGetPermission) {
-        var newPerson = {
-          emailAddresses: [{
-            label: "work",
-            email: "mrniet@example.com",
-          }],
-          displayName: "Friedrich Nietzsche"
-        }
-        Contacts.openContactForm(newPerson).then(contacts  => {
+        Contacts.openContactForm().then(contacts  => {
           getContacts(contacts);
         });
       }
@@ -97,7 +90,7 @@ const App = () => {
             borderBottomWidth: 1,
           }}>
           <Text>Name:{item.familyName}</Text>
-          <Text>Name:{item.givenName}</Text>
+          <Text>Name:{item.displayName}</Text>
           <Text>
             Email:{item.emailAddresses[0] ? item.emailAddresses[0].email : null}
           </Text>
