@@ -1,106 +1,46 @@
-import React, {useState, useEffect} from 'react';
-import {
-  Text,
-  View,
-  Image,
-  StyleSheet,
-  Button,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native';
-import Contacts from 'react-native-contacts';
-
-import Picker from './src/picker';
+import React, { useState } from 'react';
+import { Button, StyleSheet, Text, View } from 'react-native';
+import { Icon, Header, Overlay }  from 'react-native-elements';
 
 const App = () => {
-  const [contacts, setContacts] = useState([]);
+  const [visible,setVisible] = useState(false);
 
-  const requestPermission = async () => {
-    try {
-      if (Platform.OS === 'ios') {
-        return true;
-      } else {
-        const granted = await PermissionsAndroid.requestMultiple(
-          [
-            PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
-            PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS,
-          ],
-          {
-            title: 'Contacts',
-            message: 'This app would like to view your contacts.',
-            buttonPositive: 'Please accept bare mortal',
-          },
-        );
-        return (
-          granted['android.permission.WRITE_CONTACTS'] ===
-          PermissionsAndroid.RESULTS.GRANTED
-        );
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  const getContacts = () => {
-    requestPermission().then(didGetPermission => {
-      if (didGetPermission) {
-        Contacts.getAll().then(contacts => {
-          setContacts(contacts);
-          console.log(contacts);
-        });
-      }
-    });
-  };
-
-  const addContact = () => {
-    requestPermission().then(didGetPermission => {
-      if (didGetPermission) {
-        const newContact = {
-          familyName: 'Steve',
-          givenName: 'Jones',
-        };
-        Contacts.addContact(newContact).then(() => {
-          getContacts();
-        });
-      }
-    });
-  };
-
-  const openContact = () => {
-    requestPermission().then(didGetPermission => {
-      if (didGetPermission) {
-        Contacts.openContactForm().then(contacts  => {
-          getContacts(contacts);
-        });
-      }
-    });
-  };
+  const toggleOverlay = () => {
+    setVisible(!visible);
+  }
 
   return (
-    <View style={{marginTop: 50}}>
-      <Button title="get contacts" onPress={() => getContacts()} />
-      <Button title="add contacts" onPress={() => addContact()} />
-      <Button title="open contacts" onPress={() => openContact()} />
-      {contacts.map(item => (
-        <View
-          key={item.recordID}
-          style={{
-            padding: 10,
-            borderBottomColor: 'red',
-            borderBottomWidth: 1,
-          }}>
-          <Text>Name:{item.familyName}</Text>
-          <Text>Name:{item.displayName}</Text>
-          <Text>
-            Email:{item.emailAddresses[0] ? item.emailAddresses[0].email : null}
-          </Text>
-          <Text>
-            PhoneNumber:{item.phoneNumbers[0] ? item.phoneNumbers[0].number : null}
-          </Text>
-        </View>
-      ))}
+    <View>
+      <Header
+        leftComponent={
+          <Icon
+            name="email"
+            color="#f50"
+            type="entypo"
+            onPress={()=> alert('open sidedrawer')}
+          />
+        }
+        centerComponent={{ text: 'MY TITLE', style: { color: '#fff' } }}
+        rightComponent={{ icon: 'home', color: '#fff' }}
+      />
+      <Text>Hello</Text>
+      <Icon
+        name="rowing"
+      />
+
+        <Button title="open overlay" onPress={toggleOverlay}/>
+
+      <Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
+        <Text>Hello from overlay</Text>
+      </Overlay>
+      <Icon
+          raised
+          name='heartbeat'
+          type='font-awesome'
+          color='#f50'
+          onPress={() => console.log('hello')} />
     </View>
   );
-};
+}
 
 export default App;
